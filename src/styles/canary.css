@@ -1,0 +1,58 @@
+.canary {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  max-width: 420px;
+  background: #2b1d1d;
+  color: #ffd9d9;
+  border: 1px solid #ff6b6b;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+.canary-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.canary-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  flex: none;
+}
+.canary-msg {
+  flex: 1;
+}
+.canary-toggle {
+  background: transparent;
+  color: #ffd9d9;
+  border: 1px solid #ff6b6b;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font: inherit;
+}
+.canary-toggle:hover {
+  background: rgba(255, 107, 107, 0.15);
+}
+.canary-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+.canary-list li.ok::marker {
+  content: "✓ ";
+  color: #7ee787;
+}
+.canary-list li.fail::marker {
+  content: "✗ ";
+  color: #ff6b6b;
+}
+.canary-list code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1px 4px;
+  border-radius: 3px;
+}

@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Collapsible Inline LLM UI",
+  "version": "0.1.0",
+  "description": "Collapsible Gemini responses + inline follow-ups anchored to highlighted text.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["src/content-script.tsx"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Inline UI"
+  }
+}
