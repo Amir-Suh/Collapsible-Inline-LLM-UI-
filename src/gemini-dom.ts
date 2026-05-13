@@ -165,3 +165,9 @@ export function isSendButtonReady(): boolean {
   if (!btn) return false;
   return btn.getAttribute('aria-disabled') !== 'true';
 }
+
+export function getResponseSummary(turnEl: Element): string {
+  const modelResponseEl = getModelResponse(turnEl);
+  const text = modelResponseEl?.textContent?.trim() ?? '';
+  return text.slice(0, 80);
+}

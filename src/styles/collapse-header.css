@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  all: initial;
+  font-family: system-ui, sans-serif;
+}
+
+.ilui-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.ilui-chevron {
+  all: unset;
+  cursor: pointer;
+  font-size: 10px;
+  color: #5f6368;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.ilui-chevron:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.ilui-chevron:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 1px;
+}
+
+.ilui-summary {
+  font-size: 13px;
+  color: #80868b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}

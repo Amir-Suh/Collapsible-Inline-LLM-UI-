@@ -62,7 +62,7 @@ This is **Option 1 (DOM injection)** from the user's brief. The known trade-off 
 - A `ResponseObserver` (MutationObserver on the chat scroll container) emits an event each time a model turn finishes streaming.
 - For each completed model turn, inject a **header bar** above the response with: chevron toggle, the first ~80 chars of the response as a summary, timestamp.
 - Toggling collapses the response by setting `display: none` on Gemini's response body (we own the wrapper, not the inner content). Preserve scroll anchor so the user's viewport doesn't jump.
-- Default state for the *latest* response: expanded. All older responses: collapsed when a new turn arrives.
+- All responses start expanded. Collapse is purely user-driven via the chevron — no auto-collapse when a new turn arrives.
 - Keyboard: `Cmd/Ctrl + [` collapse current, `Cmd/Ctrl + ]` expand all.
 
 **State:** Per-conversation map of `{turnId: 'collapsed' | 'expanded'}` held in a Preact signal, mirrored to `chrome.storage.local` (debounced 500ms).
@@ -157,7 +157,7 @@ This is the riskiest phase. The flow:
 
 - **DOM-change detection:** Beyond the boot canary, run a periodic (every 30s) re-check of critical selectors. On failure, freeze writes to storage (so we don't corrupt the tree) and surface the "out of date" banner.
 - **Onboarding overlay:** First-run tooltip explaining the collapse chevron and the "highlight → ask" gesture.
-- **Settings panel** (popup action): toggle for auto-collapse-on-new-turn, max nesting depth, "pause extension" kill-switch.
+- **Settings panel** (popup action): max nesting depth, "pause extension" kill-switch.
 - **Accessibility:** All toggles keyboard-reachable; ARIA `aria-expanded` on collapse headers; floating action button focusable.
 - **Telemetry (opt-in only):** Local-only counters for "blocks parsed," "follow-ups sent," "canary failures." No data leaves the browser.
 - **Performance:** Bound the MutationObserver to the chat scroll container only, not `document`. Debounce selection-change handling at 100ms.
