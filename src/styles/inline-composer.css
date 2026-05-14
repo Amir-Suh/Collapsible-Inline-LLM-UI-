@@ -1,0 +1,121 @@
+:host {
+  display: block;
+  margin: 12px 0 12px 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.ilui-composer {
+  border: 1px solid rgba(138, 145, 156, 0.35);
+  border-left: 3px solid #1a73e8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(26, 115, 232, 0.04);
+}
+
+.ilui-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.ilui-quote {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: #80868b;
+  font-style: italic;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.ilui-quote-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ilui-quote-remove {
+  all: unset;
+  cursor: pointer;
+  color: #80868b;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.ilui-quote-remove:hover {
+  color: #d93025;
+  background: rgba(217, 48, 37, 0.1);
+}
+
+.ilui-composer-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 6px 8px;
+  border: 1px solid rgba(138, 145, 156, 0.4);
+  border-radius: 4px;
+  resize: vertical;
+  background: transparent;
+  color: inherit;
+}
+
+.ilui-composer-textarea:focus {
+  outline: none;
+  border-color: #1a73e8;
+}
+
+.ilui-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ilui-composer-hint {
+  flex: 1;
+  font-size: 11px;
+  color: #80868b;
+}
+
+.ilui-composer-cancel,
+.ilui-composer-submit {
+  all: unset;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.ilui-composer-cancel {
+  color: #80868b;
+}
+
+.ilui-composer-cancel:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.ilui-composer-submit {
+  background: #1a73e8;
+  color: #ffffff;
+}
+
+.ilui-composer-submit:hover:not([disabled]) {
+  background: #1765cc;
+}
+
+.ilui-composer-submit[disabled] {
+  background: rgba(26, 115, 232, 0.4);
+  cursor: not-allowed;
+}

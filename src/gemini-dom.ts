@@ -141,14 +141,36 @@ export function getModelResponse(turnEl: Element): Element | null {
 }
 
 /**
- * Whether a model response has finished streaming. Gemini toggles
- * `aria-busy` on the inner markdown panel between "true" (streaming)
- * and "false" (done). The `.response-footer.complete` class is a
- * secondary corroborator we accept if aria-busy is missing.
+ * The inner markdown panel inside a `<model-response>`. This is the element
+ * whose direct children are the renderable blocks (`<p>`, `<pre>`, `<ul>`, etc).
+ * `<model-response>` itself also wraps the avatar, action bar, and footer —
+ * block parsing should read from here, not from `<model-response>` directly.
+ */
+export function getResponseBody(modelResponseEl: Element): Element | null {
+  return modelResponseEl.querySelector('.markdown-main-panel');
+}
+
+/**
+ * Whether a model response is done streaming.
+ *
+ * Gemini sets `aria-busy="true"` on `.markdown-main-panel` only while a fresh
+ * response is streaming. When you navigate to a past chat, the panel is
+ * rendered from cache with no streaming step, so `aria-busy` is *never set
+ * at all* — the attribute is simply absent. A strict equality check against
+ * `"false"` therefore treats hydrated past-chat panels as "still streaming"
+ * and skips them, which is why checkboxes only appeared after a hard reload.
+ *
+ * The actual completion semantics are:
+ *   - `aria-busy="true"`  → streaming, not done.
+ *   - `aria-busy="false"` → streaming just finished.
+ *   - attribute missing   → no streaming context; complete iff content rendered.
  */
 export function isResponseComplete(modelResponseEl: Element): boolean {
   const panel = modelResponseEl.querySelector('.markdown-main-panel');
-  if (panel) return panel.getAttribute('aria-busy') === 'false';
+  if (panel) {
+    if (panel.getAttribute('aria-busy') === 'true') return false;
+    return panel.children.length > 0;
+  }
   return !!modelResponseEl.querySelector('.response-footer.complete');
 }
 
