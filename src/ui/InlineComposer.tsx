@@ -12,19 +12,32 @@ import {
   clearDraft,
   subscribe as subscribeDraft,
 } from '../state/composer-state';
-import { add as addFollowup } from '../state/followups-state';
+import {
+  add as addFollowup,
+  isAnyStreaming,
+  subscribe as subscribeFollowups,
+} from '../state/followups-state';
+import { submitFollowup } from '../routing';
+import { hasPending, subscribe as subscribePending } from '../routing/response-claimer';
+import { mainComposerHasDraft } from '../routing/composer-bridge';
 
 export function InlineComposer() {
   const [, force] = useState({});
   const [text, setText] = useState(getDraft());
+  const [pending, setPending] = useState(hasPending());
+  const [streaming, setStreaming] = useState(isAnyStreaming());
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     const unsubChecked = subscribeChecked(() => force({}));
     const unsubDraft = subscribeDraft(() => setText(getDraft()));
+    const unsubPending = subscribePending(() => setPending(hasPending()));
+    const unsubFollowups = subscribeFollowups(() => setStreaming(isAnyStreaming()));
     return () => {
       unsubChecked();
       unsubDraft();
+      unsubPending();
+      unsubFollowups();
     };
   }, []);
 
@@ -33,14 +46,17 @@ export function InlineComposer() {
   }, []);
 
   const quotes = getChecked();
+  const mainOccupied = mainComposerHasDraft();
+  const disabled = !text.trim() || pending || mainOccupied || streaming;
 
   function submit(): void {
     const question = text.trim();
     if (!question) return;
+    if (pending || mainOccupied || streaming) return;
     const anchor = getAnchorBlockId();
     if (!anchor) return;
 
-    addFollowup({
+    const followup = addFollowup({
       anchorBlockId: anchor,
       referencedBlocks: quotes,
       question,
@@ -48,6 +64,8 @@ export function InlineComposer() {
 
     clearDraft();
     clearChecked();
+
+    void submitFollowup(followup);
   }
 
   function cancel(): void {
@@ -70,6 +88,14 @@ export function InlineComposer() {
       cancel();
     }
   }
+
+  const hint = streaming
+    ? 'Wait for the current response to finish.'
+    : pending
+      ? 'Another follow-up is in flight. Wait for it to finish.'
+      : mainOccupied
+        ? 'Clear the main Gemini composer first.'
+        : '⌘/Ctrl + Enter to send · Esc to cancel';
 
   return (
     <div class="ilui-composer">
@@ -97,11 +123,11 @@ export function InlineComposer() {
         rows={3}
       />
       <div class="ilui-composer-actions">
-        <span class="ilui-composer-hint">⌘/Ctrl + Enter to send · Esc to cancel</span>
+        <span class="ilui-composer-hint">{hint}</span>
         <button class="ilui-composer-cancel" onClick={cancel}>
           Cancel
         </button>
-        <button class="ilui-composer-submit" onClick={submit} disabled={!text.trim()}>
+        <button class="ilui-composer-submit" onClick={submit} disabled={disabled}>
           Ask
         </button>
       </div>

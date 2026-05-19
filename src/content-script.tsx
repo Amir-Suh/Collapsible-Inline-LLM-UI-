@@ -32,6 +32,8 @@ import {
   setEnabled as setInlineEnabled,
   subscribe as subscribeInlineMode,
 } from './state/inline-mode-state';
+import { onNewTurn, abortAllInFlight } from './routing';
+import { tryClaim } from './routing/response-claimer';
 import canaryCss from './styles/canary.css?inline';
 import collapseHeaderCss from './styles/collapse-header.css?inline';
 import blockCheckboxCss from './styles/block-checkbox.css?inline';
@@ -270,6 +272,23 @@ function syncFollowups(): void {
 // === Toggle wiring ===
 
 let responseObserverCleanup: (() => void) | null = null;
+let newTurnObserver: MutationObserver | null = null;
+
+function startNewTurnObserver(): void {
+  const scroller = getChatScrollContainer();
+  if (!scroller) return;
+  newTurnObserver = new MutationObserver(() => {
+    // Any DOM change inside the scroll container might be a new turn arriving.
+    // tryClaim() is cheap: it's a no-op when nothing is pending.
+    onNewTurn(tryClaim);
+  });
+  newTurnObserver.observe(scroller, { childList: true, subtree: true });
+}
+
+function stopNewTurnObserver(): void {
+  newTurnObserver?.disconnect();
+  newTurnObserver = null;
+}
 
 function enableInlineMode(): void {
   // Inject onto every turn currently in the DOM.
@@ -278,12 +297,19 @@ function enableInlineMode(): void {
   responseObserverCleanup = startResponseObserver(turnEl => {
     if (isInlineEnabled()) parseTurnBlocks(turnEl);
   });
+  // Watch for newly-added turns so we can claim them for in-flight followups.
+  startNewTurnObserver();
 }
 
 function disableInlineMode(): void {
-  // Stop watching for new completions.
+  // Abort any in-flight followup first so any hidden turn gets un-hidden and
+  // its response renders normally at page bottom. (Plan: graceful degradation.)
+  abortAllInFlight();
+
+  // Stop watching for new completions / new turns.
   responseObserverCleanup?.();
   responseObserverCleanup = null;
+  stopNewTurnObserver();
 
   // Remove all injected checkbox / composer / followup hosts.
   document.querySelectorAll('.ilui-checkbox-host').forEach(el => el.remove());
